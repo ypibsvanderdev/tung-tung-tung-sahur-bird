@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNG TUNG SAHUR BIRD | Elite Ramadan Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Bebas+Neue&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <title>Flappy Bird</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0a0a1a;
-            --accent: #f1c40f; /* Crescent Gold */
-            --night-purple: #2b1055;
-            --soft-white: #f0f0f0;
+            --bg-top: #0a0a2a;
+            --bg-mid: #ff8c00;
+            --bg-bot: #5d4037;
+            --ground: #228b22;
         }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #0a0a1a 0%, #2b1055 100%);
-            color: #fff; font-family: 'Inter', sans-serif;
+            background: #000; color: #fff;
+            font-family: 'Inter', sans-serif;
             overflow: hidden; touch-action: none;
         }
 
@@ -26,12 +26,12 @@
         }
 
         canvas {
-            background: rgba(10, 10, 26, 0.4);
-            border-radius: 40px; box-shadow: 0 50px 100px rgba(0,0,0,0.8);
-            border: 2px solid rgba(241, 196, 15, 0.1);
+            background: linear-gradient(to bottom, var(--bg-top) 0%, var(--bg-mid) 60%, var(--bg-bot) 100%);
+            max-width: 100%; max-height: 100%;
+            display: block;
         }
 
-        /* --- RAMADAN UI OVERLAY --- */
+        /* --- 1:1 UI OVERLAY --- */
         #ui-layer {
             position: absolute; inset: 0;
             pointer-events: none;
@@ -39,84 +39,121 @@
             z-index: 100;
         }
 
-        .menu-card {
-            background: rgba(10, 10, 26, 0.6);
-            backdrop-filter: blur(40px);
-            border: 1px solid rgba(241, 196, 15, 0.2);
-            padding: 50px; border-radius: 40px;
+        .menu-screen {
             text-align: center; pointer-events: auto;
-            animation: moonRise 0.8s cubic-bezier(0.2, 1, 0.2, 1);
-            max-width: 400px; width: 90%;
         }
 
-        @keyframes moonRise { from { opacity: 0; transform: translateY(100px); } to { opacity: 1; transform: translateY(0); } }
-
-        h1 { 
-            font-family: 'Bebas Neue', cursive; font-weight: 400; 
-            letter-spacing: 10px; font-size: 4rem; margin: 0; 
-            color: var(--accent); text-shadow: 0 0 30px rgba(241, 196, 15, 0.5); 
-        }
-        
-        #subtitle { color: rgba(255,255,255,0.6); font-size: 0.8rem; letter-spacing: 5px; text-transform: uppercase; margin-top: -10px; }
-
-        .btn-start {
-            margin-top: 40px;
-            padding: 20px 60px; border: none; border-radius: 100px;
-            background: var(--accent); color: #000;
-            font-weight: 900; font-family: 'Inter', sans-serif;
-            cursor: pointer; transition: 0.4s; text-transform: uppercase;
-            letter-spacing: 2px; font-size: 1rem;
+        .game-over-text {
+            color: #ff0000; font-size: 4rem; font-weight: 900;
+            text-transform: uppercase; margin-bottom: 20px;
+            display: none;
         }
 
-        .btn-start:hover { transform: scale(1.1); box-shadow: 0 0 50px rgba(241, 196, 15, 0.4); }
-
-        #score-display {
-            position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
-            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 5rem;
-            color: #fff; text-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            opacity: 0; transition: 0.5s;
+        .score-box {
+            background: rgba(0,0,0,0.4); padding: 20px; border-radius: 10px;
+            margin-bottom: 20px; display: none;
         }
 
-        /* --- TUNG TUNG HUD --- */
-        #drum-meter {
-            position: absolute; bottom: 40px; right: 40px;
-            display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+        .score-val { font-size: 1.5rem; font-weight: 700; color: #fff; }
+        .best-val { font-size: 1.5rem; font-weight: 700; color: #ffff00; }
+
+        .btn-group {
+            display: flex; gap: 10px; justify-content: center;
         }
 
-        .drum-pulse {
-            height: 4px; width: 40px; background: var(--accent); border-radius: 100px;
-            opacity: 0.2; transition: 0.3s;
+        .btn {
+            border: none; padding: 12px 30px; border-radius: 8px;
+            font-weight: 700; cursor: pointer; text-transform: uppercase;
         }
 
-        .drum-pulse.active { opacity: 1; box-shadow: 0 0 20px var(--accent); }
+        .btn-again { background: #4caf50; color: #fff; }
+        .btn-menu { background: #757575; color: #fff; }
+        .btn-start { background: #4caf50; color: #fff; font-size: 1.2rem; padding: 15px 50px; }
+
+        /* --- CHARACTER SELECTOR (SLIDER) --- */
+        #skin-slider-container {
+            position: absolute; bottom: 40px; left: 0; right: 0;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 10px;
+        }
+
+        #skin-name { font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 2px; }
+
+        .slider-wrapper {
+            display: flex; align-items: center; gap: 20px;
+            background: rgba(255,255,255,0.1); padding: 10px 30px; border-radius: 100px;
+        }
+
+        .slider-arrow {
+            cursor: pointer; font-size: 1.5rem; transition: 0.2s; pointer-events: auto;
+        }
+
+        .slider-arrow:hover { color: #4caf50; }
+
+        .skin-icon { font-size: 2rem; }
+
+        /* --- MODE TABS --- */
+        .mode-tabs {
+            display: flex; gap: 20px; margin-bottom: 30px;
+        }
+
+        .mode-tab {
+            cursor: pointer; opacity: 0.5; transition: 0.3s; pointer-events: auto;
+            font-weight: 900; letter-spacing: 1px;
+        }
+        .mode-tab.active { opacity: 1; border-bottom: 3px solid #4caf50; }
+
+        #level-status { font-size: 0.8rem; opacity: 0.6; margin-top: 5px; }
     </style>
 </head>
 <body>
 
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
-        <div id="score-display">0</div>
         
         <div id="ui-layer">
-            <div id="main-menu" class="menu-card">
-                <h1>SAHUR</h1>
-                <div id="subtitle">TUNG TUNG TUNG EDITION</div>
+            <!-- MAIN MENU -->
+            <div id="main-menu" class="menu-screen">
+                <div class="mode-tabs">
+                    <div class="mode-tab active" onclick="setMode('endless')">ENDLESS</div>
+                    <div class="mode-tab" onclick="setMode('levels')">LEVELS</div>
+                </div>
                 
-                <p style="margin-top: 30px; font-size: 0.8rem; opacity: 0.6;">WAKE UP THE NEIGHBORHOOD WITH YOUR DRUMS</p>
+                <h1 style="font-size: 3rem; margin-bottom: 20px;">FLAPPY BIRD</h1>
+                <div id="level-status" style="display: none;">0 / 10 COMPLETED</div>
 
-                <button class="btn-start" onclick="startGame()">Wake Up</button>
+                <button class="btn btn-start" onclick="startGame()">START</button>
             </div>
-        </div>
 
-        <div id="drum-meter">
-            <div class="drum-pulse"></div>
-            <div class="drum-pulse"></div>
-            <div class="drum-pulse"></div>
+            <!-- GAME OVER -->
+            <div id="game-over" class="menu-screen" style="display: none;">
+                <div class="game-over-text" id="go-text">GAME OVER</div>
+                <div class="score-box" id="score-box">
+                    <div class="score-val">SCORE: <span id="final-score">0</span></div>
+                    <div class="best-val">BEST: <span id="best-score">0</span></div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-again" onclick="startGame()">TRY AGAIN</button>
+                    <button class="btn btn-menu" onclick="showMenu()">MENU</button>
+                </div>
+            </div>
+
+            <!-- SKIN SLIDER -->
+            <div id="skin-slider-container">
+                <div id="skin-name">SUNNY</div>
+                <div class="slider-wrapper">
+                    <div class="slider-arrow" onclick="prevSkin()">&#9664;</div>
+                    <div id="skin-icon" class="skin-icon">🐤</div>
+                    <div class="slider-arrow" onclick="nextSkin()">&#9654;</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- AUDIO FOR SAHUR DRUMS -->
-    <audio id="tung-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-tribal-drum-strike-543.mp3" preload="auto"></audio>
+    <!-- AUDIO (1:1 Samples) -->
+    <audio id="flap-sfx" src="https://assets.mixkit.co/sfx/preview/mixkit-swift-flying-whoosh-1502.mp3"></audio>
+    <audio id="score-sfx" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-reward-952.mp3"></audio>
+    <audio id="die-sfx" src="https://assets.mixkit.co/sfx/preview/mixkit-game-over-dark-orchestra-633.mp3"></audio>
 
     <script src="scripts/game.js"></script>
 </body>
