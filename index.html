@@ -70,27 +70,33 @@
         .btn-menu { background: #757575; color: #fff; }
         .btn-start { background: #4caf50; color: #fff; font-size: 1.2rem; padding: 15px 50px; }
 
-        /* --- CHARACTER SELECTOR (SLIDER) --- */
         #skin-slider-container {
             position: absolute; bottom: 40px; left: 0; right: 0;
             display: flex; flex-direction: column; align-items: center;
-            gap: 10px;
+            gap: 15px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 40px 0;
         }
 
-        #skin-name { font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 2px; }
+        #skin-name { font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 4px; font-size: 1.2rem; }
+        #skin-count { font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-top: -5px; }
 
         .slider-wrapper {
-            display: flex; align-items: center; gap: 20px;
-            background: rgba(255,255,255,0.1); padding: 10px 30px; border-radius: 100px;
+            display: flex; align-items: center; gap: 40px;
+            padding: 10px;
         }
 
         .slider-arrow {
-            cursor: pointer; font-size: 1.5rem; transition: 0.2s; pointer-events: auto;
+            cursor: pointer; font-size: 2rem; transition: 0.3s; pointer-events: auto;
+            color: rgba(255,255,255,0.3);
         }
 
-        .slider-arrow:hover { color: #4caf50; }
+        .slider-arrow:hover { color: #fff; transform: scale(1.2); }
 
-        .skin-icon { font-size: 2rem; }
+        .skin-preview-box {
+            width: 80px; height: 80px; background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1); border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+        }
 
         /* --- MODE TABS --- */
         .mode-tabs {
@@ -141,9 +147,12 @@
             <!-- SKIN SLIDER -->
             <div id="skin-slider-container">
                 <div id="skin-name">SUNNY</div>
+                <div id="skin-count">1 / 11</div>
                 <div class="slider-wrapper">
                     <div class="slider-arrow" onclick="prevSkin()">&#9664;</div>
-                    <div id="skin-icon" class="skin-icon">🐤</div>
+                    <div class="skin-preview-box">
+                        <canvas id="skinPreview" width="60" height="60"></canvas>
+                    </div>
                     <div class="slider-arrow" onclick="nextSkin()">&#9654;</div>
                 </div>
             </div>
