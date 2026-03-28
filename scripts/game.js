@@ -279,7 +279,7 @@ function update() {
 
     bird.update();
 
-    if (frameCount % 120 === 0) {
+    if (frameCount % 240 === 0) { // Hyper-Spaced Metaphorical '5 Feet' Gap
         pipes.push(new Pipe(WIDTH));
     }
 
