@@ -114,13 +114,13 @@ class Pipe {
     constructor(x) {
         this.x = x;
         this.width = 80;
-        this.gap = 180;
-        this.topHeight = Math.random() * (HEIGHT - this.gap - 200) + 100;
+        this.gap = 200; // Increased spacing for additive playability
+        this.topHeight = Math.random() * (HEIGHT - this.gap - 250) + 120;
         this.passed = false;
     }
 
     update() {
-        this.x -= 3.5;
+        this.x -= 3.2; // Slightly tuned speed
     }
 
     draw() {
@@ -221,7 +221,7 @@ function update() {
 
     bird.update();
 
-    if (frameCount % 90 === 0) {
+    if (frameCount % 120 === 0) { // Increased horizontal spacing
         pipes.push(new Pipe(WIDTH));
     }
 
